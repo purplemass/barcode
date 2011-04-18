@@ -44,10 +44,12 @@
 			barcodeText.text = this.start_str;
 
 			// Code39
-			this.showResult(code39.encode(this.start_str), 100);
+			code39.setLineWidth(1);
+			code39.mc_on_stage = this.showResult(code39.encode(this.start_str), code39, 100);
 			
 			// Code128
-			this.showResult(code128.encode(this.start_str), 300);
+			code128.setLineWidth(1);
+			code128.mc_on_stage = this.showResult(code128.encode(this.start_str), code128, 300);
 		}
 		
 		private function buildStage( )
@@ -77,25 +79,27 @@
 
 		private function mouseDownHandler(event:MouseEvent):void
 		{
-			var mc:Sprite = code128.encode(barcodeText.text);
-			
-			this.showResult(mc);
-			
-			//button.x += 20
-			//if (button.x > 400) { button.x = 0}
+			code39.mc_on_stage = this.showResult(code39.encode(barcodeText.text), code39, 100);
+			code128.mc_on_stage = this.showResult(code128.encode(barcodeText.text), code128, 300);
 		}		
 		
-		private function showResult(mc:Sprite, my_y:int=500):void
+		private function showResult(mc:Sprite, my_obj=null, my_y:int=500):Sprite
 		{
-			if ( mc )
+		 	if ( mc )
 			{
-				var rand:int = 10 + Math.round(Math.random() * (1000 - 10)) + 10;
+				if (my_obj)
+				{
+					if(my_obj.mc_on_stage)
+						this._stage.removeChild(my_obj.mc_on_stage);
+				}
 				
 				mc.x = 10;
 				mc.y = my_y;
 				
 				this._stage.addChild(mc);
 			}
+			
+			return mc;
 		}
 		
 		// ===============================================

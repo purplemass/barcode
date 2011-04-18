@@ -9,9 +9,11 @@
 	
 	public class Code39 extends Sprite
 	{
-		private var lib_version:String = '1.1';
+		public var mc_on_stage:Sprite;
 		
-		private var line_style:int = 2;
+		private var lib_version:String = '1.2';
+		
+		private var line_style:int = 1;
 		private var line_thickness:int = 0;
 		private var line_gap:int = line_style;
 		private var border:int = 5;
@@ -54,19 +56,25 @@
 		
 		// SETTERS ***********
 		
+		public function setLineWidth(nWidth)
+		{
+			this.line_style = nWidth;
+			this.line_gap = nWidth;
+		}
+		
 		public function setBorder(nWidth)
 		{
-			this.border = nWidth;	
+			this.border = nWidth;
 		}
 		
 		public function setBackgroundColor(the_color)
 		{
-			this.container_color = the_color;	
+			this.container_color = the_color;
 		}
 		
 		public function setBarColor(the_color)
 		{
-			this.bar_color = the_color;	
+			this.bar_color = the_color;
 		}
 		
 		public function setCallbackHandler(method, location)
@@ -187,11 +195,10 @@
 				{
 					var tf = new TextField();
 					
-					tf.defaultTextFormat = text_format; //new TextFormat('_sans', 13);
-/* 					tf.textColor=0x0000ff; */
+					tf.defaultTextFormat = text_format;
 					tf.selectable = false;
 					tf.text = letters_array[i];
-					tf.x = textWidth * i;
+					tf.x = textWidth * i - (10/this.line_style);
 					tf.y = this.bars_mc.height+this.border-(15/2);
 					
 					text_mc.addChild(tf);
@@ -238,7 +245,7 @@
 			
 			text_format.font = "Arial";
 			text_format.bold = true;
-			text_format.size = 15;
+			text_format.size = 10;
 			text_format.align = "center";
 			text_format.color = this.text_color;
 			

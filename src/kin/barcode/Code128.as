@@ -1,4 +1,4 @@
-﻿	package kin.barcode
+﻿package kin.barcode
 {
 	import flash.display.Sprite;
 	
@@ -9,7 +9,9 @@
 	
 	public class Code128 extends Sprite
 	{
-		private var lib_version:String = '1.0';
+		public var mc_on_stage:Sprite;
+		
+		private var lib_version:String = '1.1';
 				
 		private var BARS = new Array(212222,222122,222221,121223,121322,131222,122213,122312,132212,221213,221312,231212,112232,122132,122231,113222,123122,123221,223211,221132,221231,213212,223112,312131,311222,321122,321221,312212,322112,322211,212123,212321,232121,111323,131123,131321,112313,132113,132311,211313,231113,231311,112133,112331,132131,113123,113321,133121,313121,211331,231131,213113,213311,213131,311123,311321,331121,312113,312311,332111,314111,221411,431111,111224,111422,121124,121421,141122,141221,112214,112412,122114,122411,142112,142211,241211,221114,413111,241112,134111,111242,121142,121241,114212,124112,124211,411212,421112,421211,212141,214121,412121,111143,111341,131141,114113,114311,411113,411311,113141,114131,311141,411131,211412,211214,211232,23311120);
 		private var START_BASE = 38;
@@ -19,7 +21,7 @@
 		private var line_style:int = 1;
 		private var line_thickness:int = 0;
 		private var line_gap:int = line_style;
-		private var border:int = 50;
+		private var border:int = 5;
 		
 		private var container_width:int = 398;
 		private var container_height:int = 114;
@@ -59,6 +61,12 @@
 		
 		// SETTERS ***********
 		
+		public function setLineWidth(nWidth)
+		{
+			this.line_style = nWidth;
+			this.line_gap = nWidth;
+		}
+		
 		public function setBorder(nWidth)
 		{
 			this.border = nWidth;	
@@ -85,8 +93,6 @@
 		// encodes a string
 		public function encode(the_str):Sprite
 		{
-			trace('encode: '+the_str);
-			
 			this.the_str = the_str;
 			
 			do_encode(this.code128(the_str));
@@ -124,9 +130,6 @@
 		
 		private function do_encode(bars_str:String):Boolean
 		{			
-			trace('do_encode: '+this.the_str);
-			trace('bars_str: '+bars_str);
-			
 			//this.clear();
 			
 			var draw_array:Array;
@@ -151,7 +154,6 @@
 			// if necessary
 			//
 			draw_array = bars_str.split("");
-			trace('draw_array:'+draw_array);
 			
 			var c:int = 0;
 			
@@ -188,11 +190,13 @@
 				{
 					var tf = new TextField();
 					
-					tf.defaultTextFormat = text_format; //new TextFormat('_sans', 13);
-/* 					tf.textColor=0x0000ff; */
+					//new TextFormat('_sans', 13);
+ 					//tf.textColor=0x0000ff;
+					
+					tf.defaultTextFormat = text_format;
 					tf.selectable = false;
 					tf.text = letters_array[i];
-					tf.x = textWidth * i;
+					tf.x = textWidth * i - (10/this.line_style);
 					tf.y = this.bars_mc.height+this.border-(15/2);
 					
 					text_mc.addChild(tf);
@@ -223,7 +227,7 @@
 			
 			text_format.font = "Arial";
 			text_format.bold = true;
-			text_format.size = 15;
+			text_format.size = 10;
 			text_format.align = "center";
 			text_format.color = this.text_color;			
 		}
@@ -251,10 +255,7 @@
 			var ret:String = '';
 			
 			for(var pos=0; pos<s.length; pos+=2)
-			{
-				trace(s + ' ---' + s.charAt(pos) + ' ' + s.charAt(pos+1));
 				ret += charRepeat('1', int(s.charAt(pos))) + charRepeat('0', int(s.charAt(pos+1)));
-			}
 			
 			return ret;
 		}
@@ -324,9 +325,6 @@
 			};
 			
 			bars.add(START_BASE + barcodeType.charCodeAt(0));
-
-			trace('barcodeType:'+barcodeType);
-			trace('barcode:'+barcode);
 			
 			var code = '';
 			var converted = '';
@@ -336,12 +334,8 @@
 				//code = (barcodeType=='C') ? code+barcode.substr(i++, 2) : barcode.charCodeAt(i);
 				code = (barcodeType=='C') ?		   barcode.substr(i++, 2) : barcode.charCodeAt(i);
 				
-				trace('code:'+code);
-				
 				//converted = fromType[barcodeType](code);
 				converted = getFromType(code, barcodeType);
-
-				trace('converted:'+converted);
 				
 				if (isNaN(converted) || converted<0 || converted>106)
 				{
@@ -352,8 +346,6 @@
 			}
 			
 			bars.push(BARS[bars.check % 103], BARS[STOP]);
-			
-			trace(bars);
 			
 			return bars;
 		}
